@@ -97,7 +97,7 @@ namespace visa
     }
     interface ICmd
     {
-        void RunAnsw(string message);
+        void Run(string message);
         void Send(string message);
     }
 
@@ -110,7 +110,7 @@ namespace visa
             gsp.ResieveErrorMessage += Send;
             gsp.Open();
         }
-        public void RunAnsw(string message)
+        public void Run(string message)
         {
             if (!string.IsNullOrWhiteSpace(message))
             {
@@ -134,22 +134,40 @@ namespace visa
     }
     class Program
     {
+        static PingCmd p = new PingCmd();
         static void Main(string[] args)
         {
-            PingCmd p = new PingCmd();
+
             while (true)
             {
-                p.RunAnsw(":outp:stat 1");
-                p.RunAnsw(":outp:stat?");
-                p.RunAnsw(":chan1:meas:curr ?");
-                p.RunAnsw(":chan1:meas:volt ?");
-                p.RunAnsw(":outp:stat 0");
-                p.RunAnsw(":outp:stat?");
+
+                var message = Console.ReadLine();
+                Thread thr = new Thread(delegate () { SendToSupply1(message); });
+                thr.Name = "1";
+                thr.Start();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine($"i = {i}");
+                    Thread.Sleep(1000);
+                }
+
+                
+                //p.RunAnsw(":chan1:meas:curr ?");
+                //p.RunAnsw(":chan1:meas:volt ?");
+                //p.RunAnsw(":outp:stat 0");
+                //p.RunAnsw(":outp:stat?");
 
                 //Thread thr = new Thread(delegate () { SendToSupply1(message); });
                 //thr.Name = $"MyDevice 1";
                 //thr.Start();
             }
         }
+
+        static void SendToSupply1(string message)
+        {
+            p.Run(message);
+        }
+
     }
 }
