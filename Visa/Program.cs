@@ -14,12 +14,12 @@ namespace visa
 
     class SerialPort
     {
-        private readonly int Number;
-        private readonly int BaudRate;
-        private readonly int Parity;
+        private int Number;
+        private int BaudRate;
+        private int Parity;
         private GodSerialPort Serial;
-        public event Action<Exception> ResieveErrorMessage;
-        public event Action<string> ResieveMessage;
+        public event Action<Exception> ReceiveErrorMessage;
+        public event Action<string> ReceiveMessage;
 
         public SerialPort(int number, int baudRate, int parity)
         {
@@ -39,7 +39,7 @@ namespace visa
                 }
                 catch (Exception exception)
                 {
-                    ResieveErrorMessage?.Invoke(exception);
+                    ReceiveErrorMessage?.Invoke(exception);
                 }
             }
 
@@ -56,7 +56,7 @@ namespace visa
             }
             catch (Exception exception)
             {
-                ResieveErrorMessage?.Invoke(exception);
+                ReceiveErrorMessage?.Invoke(exception);
             }
         }
 
@@ -65,11 +65,11 @@ namespace visa
             try
             {
                 var dataBytes = Encoding.UTF8.GetString(Serial.Read());
-                ResieveMessage?.Invoke(RemoveUnnecessary(dataBytes));
+                ReceiveMessage?.Invoke(RemoveUnnecessary(dataBytes));
             }
             catch (Exception exception)
             {
-                ResieveErrorMessage?.Invoke(exception);
+                ReceiveErrorMessage?.Invoke(exception);
             }
         }
 
@@ -85,12 +85,12 @@ namespace visa
                 }
                 catch (Exception exception)
                 {
-                    ResieveErrorMessage?.Invoke(exception);
+                    ReceiveErrorMessage?.Invoke(exception);
                 }
             }
         }
 
-        string RemoveUnnecessary(string message)
+        static string RemoveUnnecessary(string message)
         {
             var unnecessary = new[] {'?', '\n', '\r'};
             return String.Join("", message.Where((ch) => !unnecessary.Contains(ch)));
@@ -105,13 +105,12 @@ namespace visa
 
     class PingCmd : ICmd
     {
-        SerialPort gsp = new SerialPort(4, 9600, 0);
+        SerialPort Gsp = new SerialPort(4, 9600, 0);
 
         public PingCmd()
         {
-            gsp.ResieveMessage += Send;
-            //gsp.ResieveErrorMessage += Send;
-            gsp.Open();
+            Gsp.ReceiveMessage += Send;
+            Gsp.Open();
         }
 
         public void Run(string message)
@@ -121,14 +120,14 @@ namespace visa
             {
                 if (message.Contains('?'))
                 {
-                    gsp.Write(message);
-                    Thread.Sleep(500);//
-                    gsp.Read();
+                    Gsp.Write(message);
+                    Thread.Sleep(500);
+                    Gsp.Read();
                     Thread.Sleep(500);
                 }
                 else
                 {
-                    gsp.Write(message);
+                    Gsp.Write(message);
                 }
             }
         }

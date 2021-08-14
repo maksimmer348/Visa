@@ -1,6 +1,6 @@
-﻿namespace VisaForm.Devices
+﻿namespace VisaForm.Devices.Libraries
 {
-    public static class ComandsSupplyPSH
+    public static class CommandsSupplyPSH
     {
         public const string SET_VOLTAGE = ":chan1:volt";
         public const string RETURN_VOLTAGE = ":chan1:meas:volt ?";
@@ -10,6 +10,6 @@
         public const string RETURN_SET_CURRENT = ":chan1:curr ?";
         public const string OUTPUT_ON = ":outp:stat1";
         public const string OUTPUT_OFF = ":outp:stat0";
-        public const string GET_OUTPUT = ":outp:stat?";
+        public const string RETURN_OUTPUT = ":outp:stat?";
     }
 }

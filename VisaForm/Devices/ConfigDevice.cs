@@ -5,8 +5,7 @@ namespace VisaForm.Devices
 {
     public struct ConfigDevice
     {
-        public string DeviceName;
-        public int CannelNum;
+        public int ChannelNumber;
         public int BaudRate;
         public int ParityBit;
     }

@@ -38,15 +38,17 @@ namespace VisaForm
             this.GetCurrentToSupplyPSH = new System.Windows.Forms.TextBox();
             this.GetVoltageToSupplyPSH = new System.Windows.Forms.TextBox();
             this.GroupSupplyPSH = new System.Windows.Forms.GroupBox();
+            this.FineTuning = new System.Windows.Forms.CheckBox();
             this.GroupMeterGDM = new System.Windows.Forms.GroupBox();
-            this.StartTheMeterGDM = new System.Windows.Forms.Button();
-            this.GetVoltageToMeterGDM = new System.Windows.Forms.TextBox();
-            this.GetCurrentToMeterGDM = new System.Windows.Forms.TextBox();
-            this.GetPowerToMeterGDM = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.FineTuning = new System.Windows.Forms.CheckBox();
+            this.GetPowerToMeterGDM = new System.Windows.Forms.TextBox();
+            this.GetCurrentToMeterGDM = new System.Windows.Forms.TextBox();
+            this.GetVoltageToMeterGDM = new System.Windows.Forms.TextBox();
+            this.StartTheMeterGDM = new System.Windows.Forms.Button();
+            this.CheckDevice = new System.Windows.Forms.Button();
+            this.CheckLump = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.SetCurrentToSupplyPSH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SetVoltageToSupplyPSH)).BeginInit();
             this.GroupSupplyPSH.SuspendLayout();
@@ -137,6 +139,8 @@ namespace VisaForm
             // 
             // GroupSupplyPSH
             // 
+            this.GroupSupplyPSH.Controls.Add(this.CheckLump);
+            this.GroupSupplyPSH.Controls.Add(this.CheckDevice);
             this.GroupSupplyPSH.Controls.Add(this.FineTuning);
             this.GroupSupplyPSH.Controls.Add(this.GetCurrentToSupplyPSH);
             this.GroupSupplyPSH.Controls.Add(this.GetVoltageToSupplyPSH);
@@ -152,6 +156,17 @@ namespace VisaForm
             this.GroupSupplyPSH.TabIndex = 13;
             this.GroupSupplyPSH.TabStop = false;
             this.GroupSupplyPSH.Text = "Supply PSH";
+            // 
+            // FineTuning
+            // 
+            this.FineTuning.AutoSize = true;
+            this.FineTuning.Location = new System.Drawing.Point(6, 84);
+            this.FineTuning.Name = "FineTuning";
+            this.FineTuning.Size = new System.Drawing.Size(54, 17);
+            this.FineTuning.TabIndex = 13;
+            this.FineTuning.Text = "точно";
+            this.FineTuning.UseVisualStyleBackColor = true;
+            this.FineTuning.CheckedChanged += new System.EventHandler(this.FineTuning_CheckedChanged);
             // 
             // GroupMeterGDM
             // 
@@ -169,39 +184,14 @@ namespace VisaForm
             this.GroupMeterGDM.TabStop = false;
             this.GroupMeterGDM.Text = "Meter GDM";
             // 
-            // StartTheMeterGDM
+            // label5
             // 
-            this.StartTheMeterGDM.Location = new System.Drawing.Point(6, 113);
-            this.StartTheMeterGDM.Name = "StartTheMeterGDM";
-            this.StartTheMeterGDM.Size = new System.Drawing.Size(171, 23);
-            this.StartTheMeterGDM.TabIndex = 13;
-            this.StartTheMeterGDM.Text = "запустить измерения";
-            this.StartTheMeterGDM.UseVisualStyleBackColor = true;
-            this.StartTheMeterGDM.Click += new System.EventHandler(this.StartTheMeterGDM_Click);
-            // 
-            // GetVoltageToMeterGDM
-            // 
-            this.GetVoltageToMeterGDM.Location = new System.Drawing.Point(64, 28);
-            this.GetVoltageToMeterGDM.Name = "GetVoltageToMeterGDM";
-            this.GetVoltageToMeterGDM.ReadOnly = true;
-            this.GetVoltageToMeterGDM.Size = new System.Drawing.Size(100, 20);
-            this.GetVoltageToMeterGDM.TabIndex = 13;
-            // 
-            // GetCurrentToMeterGDM
-            // 
-            this.GetCurrentToMeterGDM.Location = new System.Drawing.Point(64, 55);
-            this.GetCurrentToMeterGDM.Name = "GetCurrentToMeterGDM";
-            this.GetCurrentToMeterGDM.ReadOnly = true;
-            this.GetCurrentToMeterGDM.Size = new System.Drawing.Size(100, 20);
-            this.GetCurrentToMeterGDM.TabIndex = 14;
-            // 
-            // GetPowerToMeterGDM
-            // 
-            this.GetPowerToMeterGDM.Location = new System.Drawing.Point(64, 81);
-            this.GetPowerToMeterGDM.Name = "GetPowerToMeterGDM";
-            this.GetPowerToMeterGDM.ReadOnly = true;
-            this.GetPowerToMeterGDM.Size = new System.Drawing.Size(100, 20);
-            this.GetPowerToMeterGDM.TabIndex = 15;
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(21, 84);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(37, 13);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "ватты";
             // 
             // label1
             // 
@@ -221,25 +211,58 @@ namespace VisaForm
             this.label4.TabIndex = 13;
             this.label4.Text = "амперы";
             // 
-            // label5
+            // GetPowerToMeterGDM
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(21, 84);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(37, 13);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "ватты";
+            this.GetPowerToMeterGDM.Location = new System.Drawing.Point(64, 81);
+            this.GetPowerToMeterGDM.Name = "GetPowerToMeterGDM";
+            this.GetPowerToMeterGDM.ReadOnly = true;
+            this.GetPowerToMeterGDM.Size = new System.Drawing.Size(100, 20);
+            this.GetPowerToMeterGDM.TabIndex = 15;
             // 
-            // FineTuning
+            // GetCurrentToMeterGDM
             // 
-            this.FineTuning.AutoSize = true;
-            this.FineTuning.Location = new System.Drawing.Point(6, 84);
-            this.FineTuning.Name = "FineTuning";
-            this.FineTuning.Size = new System.Drawing.Size(54, 17);
-            this.FineTuning.TabIndex = 13;
-            this.FineTuning.Text = "точно";
-            this.FineTuning.UseVisualStyleBackColor = true;
-            this.FineTuning.CheckedChanged += new System.EventHandler(this.FineTuning_CheckedChanged);
+            this.GetCurrentToMeterGDM.Location = new System.Drawing.Point(64, 55);
+            this.GetCurrentToMeterGDM.Name = "GetCurrentToMeterGDM";
+            this.GetCurrentToMeterGDM.ReadOnly = true;
+            this.GetCurrentToMeterGDM.Size = new System.Drawing.Size(100, 20);
+            this.GetCurrentToMeterGDM.TabIndex = 14;
+            // 
+            // GetVoltageToMeterGDM
+            // 
+            this.GetVoltageToMeterGDM.Location = new System.Drawing.Point(64, 28);
+            this.GetVoltageToMeterGDM.Name = "GetVoltageToMeterGDM";
+            this.GetVoltageToMeterGDM.ReadOnly = true;
+            this.GetVoltageToMeterGDM.Size = new System.Drawing.Size(100, 20);
+            this.GetVoltageToMeterGDM.TabIndex = 13;
+            // 
+            // StartTheMeterGDM
+            // 
+            this.StartTheMeterGDM.Location = new System.Drawing.Point(6, 113);
+            this.StartTheMeterGDM.Name = "StartTheMeterGDM";
+            this.StartTheMeterGDM.Size = new System.Drawing.Size(171, 23);
+            this.StartTheMeterGDM.TabIndex = 13;
+            this.StartTheMeterGDM.Text = "запустить измерения";
+            this.StartTheMeterGDM.UseVisualStyleBackColor = true;
+            this.StartTheMeterGDM.Click += new System.EventHandler(this.StartTheMeterGDM_Click);
+            // 
+            // CheckDevice
+            // 
+            this.CheckDevice.Location = new System.Drawing.Point(116, 84);
+            this.CheckDevice.Name = "CheckDevice";
+            this.CheckDevice.Size = new System.Drawing.Size(72, 23);
+            this.CheckDevice.TabIndex = 14;
+            this.CheckDevice.Text = "проверка";
+            this.CheckDevice.UseVisualStyleBackColor = true;
+            // 
+            // CheckLump
+            // 
+            this.CheckLump.BackColor = System.Drawing.Color.Red;
+            this.CheckLump.ForeColor = System.Drawing.Color.Transparent;
+            this.CheckLump.Location = new System.Drawing.Point(194, 84);
+            this.CheckLump.Name = "CheckLump";
+            this.CheckLump.Size = new System.Drawing.Size(14, 23);
+            this.CheckLump.TabIndex = 15;
+            this.CheckLump.UseVisualStyleBackColor = false;
             // 
             // Form1
             // 
@@ -280,6 +303,8 @@ namespace VisaForm
         private System.Windows.Forms.TextBox GetVoltageToMeterGDM;
         private System.Windows.Forms.Button StartTheMeterGDM;
         private System.Windows.Forms.CheckBox FineTuning;
+        private System.Windows.Forms.Button CheckLump;
+        private System.Windows.Forms.Button CheckDevice;
     }
 }
 

@@ -7,16 +7,16 @@ using GodSharp.SerialPort;
 
 namespace VisaForm.ComPort
 {
-    class SerialPort
+    public class MySerialPort
     {
         private int Number;
         private int BaudRate;
         private int Parity;
-        private GodSerialPort serial;
-        public event Action<string> ResieveErrorMessage;
-        public event Action<string> ResieveMessage;
+        private GodSerialPort Serial;
+        public event Action<Exception> ReceiveErrorMessage;
+        public event Action<string> ReceiveMessage;
 
-        public SerialPort(int number, int baudRate, int parity)
+        public MySerialPort(int number, int baudRate, int parity)
         {
             Number = number;
             BaudRate = baudRate;
@@ -25,16 +25,16 @@ namespace VisaForm.ComPort
 
         public void Open()
         {
-            if (serial == null || !serial.IsOpen)
+            if (Serial == null || !Serial.IsOpen)
             {
                 try
                 {
-                    serial = new GodSerialPort($"COM{Number}", BaudRate, Parity);
-                    serial.Open();
+                    Serial = new GodSerialPort($"COM{Number}", BaudRate, Parity);
+                    Serial.Open();
                 }
                 catch (Exception exception)
                 {
-                    ResieveErrorMessage?.Invoke(exception.Message);
+                    ReceiveErrorMessage?.Invoke(exception);
                 }
             }
 
@@ -46,49 +46,48 @@ namespace VisaForm.ComPort
             try
             {
                 var dataBytes = Encoding.UTF8.GetBytes(message + END_OF_LINE);
-                serial.Write(dataBytes);
+                Serial.Write(dataBytes);
 
             }
             catch (Exception exception)
             {
-                ResieveErrorMessage?.Invoke(exception.Message);
+                throw exception;
             }
         }
 
-        public void Read()
+        public string Read()
         {
             try
             {
-                var dataBytes = Encoding.UTF8.GetString(serial.Read());
-                ResieveMessage?.Invoke(RemoveUnnecessary(dataBytes));
+                var dataBytes = Encoding.UTF8.GetString(Serial.Read());
+                return dataBytes;
             }
             catch (Exception exception)
             {
-                ResieveErrorMessage?.Invoke(exception.Message);
+                throw exception;
             }
         }
 
         public void Close()
         {
-            if (serial != null && serial.IsOpen)
+            if (Serial != null && Serial.IsOpen)
             {
                 try
                 {
-
-                    serial.Close();
+                    Serial.Close();
 
                 }
                 catch (Exception exception)
                 {
-                    ResieveErrorMessage?.Invoke(exception.Message);
+                    ReceiveErrorMessage?.Invoke(exception);
                 }
             }
         }
-        string RemoveUnnecessary(string message)
+
+        static string RemoveUnnecessary(string message)
         {
             var unnecessary = new[] { '?', '\n', '\r' };
             return String.Join("", message.Where((ch) => !unnecessary.Contains(ch)));
         }
-
     }
 }

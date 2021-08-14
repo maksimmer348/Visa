@@ -50,10 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComPort\SerialPort.cs" />
-    <Compile Include="Devices\Librarys\ComandsSupplyPSH.cs" />
-    <Compile Include="Devices\Librarys\CommandsLibary.cs" />
+    <Compile Include="Devices\DeviceSupplyPSH.cs" />
+    <Compile Include="Devices\Libraries\ComandsSupplyPSH.cs" />
+    <Compile Include="Devices\Libraries\CommandsLibrary.cs" />
     <Compile Include="Devices\ConfigDevice.cs" />
     <Compile Include="Devices\IDevice.cs" />
+    <Compile Include="Devices\Libraries\Device.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
