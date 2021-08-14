@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using VisaForm.ComPort;
 using VisaForm.Devices.Libraries;
 using static VisaForm.Devices.Libraries.CommandsSupplyPSH;
@@ -8,30 +9,35 @@ namespace VisaForm.Devices
 {
     public class DeviceSupplyPSH : Device
     {
-       
-        private void Output()
+        public DeviceSupplyPSH() : base(identifier:"?")
         {
-            Start(() =>
+        }
+
+        private async void Output()
+        {
+            var answer = await StartSendCommands(RETURN_OUTPUT);
+            if (answer == "0")
             {
-                SendCommands(RETURN_OUTPUT);
-                if (Answer == "0")
-                {
-                    SendCommands(OUTPUT_ON);
-                }
-                else if (Answer == "1")
-                {
-                    SendCommands(OUTPUT_OFF);
-                }
-            });
+                await StartSendCommands(OUTPUT_ON);
+            }
+            else if (answer == "1")
+            {
+                await StartSendCommands(OUTPUT_OFF);
+            }
+        }
+
+        async Task<string> ReturnVoltage()
+        {
+            return await StartSendCommands(RETURN_VOLTAGE);
         }
         void SetVoltageValues(int voltage)
         {
-            SendCommands(SET_VOLTAGE);
+            StartSendCommands(SET_VOLTAGE).ConfigureAwait(false);
         }
 
         void SetCurrentValue(int curent)
         {
-            SendCommands(SET_CURRENT);
+            StartSendCommands(SET_CURRENT).ConfigureAwait(false); ;
         }
 
         public override void Check()
@@ -45,5 +51,7 @@ namespace VisaForm.Devices
 
             }
         }
+
+  
     }
 }

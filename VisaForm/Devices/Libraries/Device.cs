@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using VisaForm.ComPort;
 
 namespace VisaForm.Devices.Libraries
 {
-    public abstract class Device : IDevice
+    public abstract class Device
     {
         protected MySerialPort Serial;
         public event EventHandler<string> Received;
         protected string Identifier;
-        
-        private Thread thread;
+
+
+        private CancellationTokenSource repeatToken;
 
         protected Device(string identifier)
         {
@@ -23,20 +25,35 @@ namespace VisaForm.Devices.Libraries
             Serial = new MySerialPort(cfg.ChannelNumber, cfg.BaudRate, cfg.ParityBit);
         }
 
-        public string StartSendCommands(params string[] commands)
+        public void RepeatCommands(params string[] commands)
         {
-            Start(() => SendCommands(commands));
+            repeatToken = new CancellationTokenSource();
+            Task.Run(async () =>
+            {
+                while (!repeatToken.IsCancellationRequested)
+                {
+                    await SendCommands(commands);
+                }
+            }, repeatToken.Token);
+
+        }
+        public async Task<string> StartSendCommands(params string[] commands)
+        {
+            return await Task.Run(() => SendCommands(commands));
         }
 
-        public string SendCommands(params string[] commands)
+        public async Task<string> SendCommands(string[] commands, CancellationTokenSource token = null)
         {
+            token?.Cancel();
+            await Task.Delay(500);
+
             string result = null;
             foreach (var command in commands)
             {
                 if (command.Contains(Identifier))
                 {
                     Serial.Write(command);
-                    Thread.Sleep(500);
+                    await Task.Delay(500);
                     result = Serial.Read();
                 }
                 else
@@ -44,17 +61,13 @@ namespace VisaForm.Devices.Libraries
                     Serial.Write(command);
 
                 }
-                Thread.Sleep(500);
+
+                await Task.Delay(500);
             }
 
             return result;
         }
 
-        public void Start(Action action)
-        {
-            thread = new Thread(new ThreadStart(action));
-            thread.Start();
-        }
         public abstract void Check();
     }
 }
