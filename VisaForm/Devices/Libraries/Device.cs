@@ -14,7 +14,7 @@ namespace VisaForm.Devices.Libraries
         public event Action<string> ResponseMessage;//прием обычных сообщений с прибора
         public event Action<string, string> ResponseSpecMessage;//прием сообщений с прибора вида => ответ от прибора[20], команда прибору[:chan1:meas:volt ?] 
         protected string Identifier = "?";//индентифиактор запросов 
-
+        
         protected Device(ConfigDevice config, string identifier)
         {
             Serial = new MySerialPort(config.ChannelNumber, config.BaudRate, config.ParityBit);
@@ -27,7 +27,7 @@ namespace VisaForm.Devices.Libraries
             Run = Task.Run(async () => WorkRepeat(cmd));
         }
 
-        public void SetValue(string cmd)
+        public void SetValue(CommandImplicits cmd)
         {
             Run = Task.Run(async () => Work(cmd));
         }
@@ -45,7 +45,7 @@ namespace VisaForm.Devices.Libraries
                 }
             }
         }
-        private void Work(string command)
+        private void Work(CommandImplicits command)
         {
             if (!command.Contains(Identifier))//если это запрос то ответ нам не нужен
             {

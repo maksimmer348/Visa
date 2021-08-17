@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using VisaForm.ComPort;
 using VisaForm.Devices.Libraries;
 using static VisaForm.Devices.Libraries.CommandsSupplyPSH;
@@ -29,7 +30,9 @@ namespace VisaForm.Devices
             }
         }
 
-        public void Output()
+       
+
+        public void Output(Button btn)
         {
             SetValue(RETURN_OUTPUT);
         }
@@ -49,5 +52,24 @@ namespace VisaForm.Devices
             SetValue(SET_CURRENT + $" {current}");
         }
 
+    }
+
+    public class CommandImplicits
+    {
+        public string command;
+
+        public CommandImplicits(string command)
+        {
+            this.command = command;
+        }
+        public static implicit operator CommandImplicits(string x)
+        {
+            return new CommandImplicits(x);
+        }
+
+        private CommandImplicits Contains(string contains)
+        {
+            return command.Contains(contains);
+        }
     }
 }
