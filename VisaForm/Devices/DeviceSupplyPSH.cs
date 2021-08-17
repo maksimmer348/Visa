@@ -9,49 +9,45 @@ namespace VisaForm.Devices
 {
     public class DeviceSupplyPSH : Device
     {
-        public DeviceSupplyPSH() : base(identifier:"?")
+        public DeviceSupplyPSH(ConfigDevice cfg) : base(cfg, "?")
         {
+            ResponseSpecMessage += REsponse;
         }
 
-        private async void Output()
+        private void REsponse(string response, string cmd)
         {
-            var answer = await StartSendCommands(RETURN_OUTPUT);
-            if (answer == "0")
+            if (cmd == RETURN_OUTPUT)
             {
-                await StartSendCommands(OUTPUT_ON);
-            }
-            else if (answer == "1")
-            {
-                await StartSendCommands(OUTPUT_OFF);
-            }
-        }
-
-        async Task<string> ReturnVoltage()
-        {
-            return await StartSendCommands(RETURN_VOLTAGE);
-        }
-        void SetVoltageValues(int voltage)
-        {
-            StartSendCommands(SET_VOLTAGE).ConfigureAwait(false);
-        }
-
-        void SetCurrentValue(int curent)
-        {
-            StartSendCommands(SET_CURRENT).ConfigureAwait(false); ;
-        }
-
-        public override void Check()
-        {
-            try
-            {
-                Serial.Write(RETURN_VOLTAGE);
-            }
-            catch (Exception e)
-            {
-
+                if (response == "1")
+                {
+                    SetValue(OUTPUT_OFF);
+                }
+                else if (response == "0")
+                {
+                    SetValue(OUTPUT_ON);
+                }
             }
         }
 
-  
+        public void Output()
+        {
+            SetValue(RETURN_OUTPUT);
+        }
+
+        public void Return()
+        {
+            GetValue(RETURN_OUTPUT, RETURN_VOLTAGE, RETURN_CURRENT);
+        }
+
+        public void SetVoltageValues(string voltage)
+        {
+            SetValue(SET_VOLTAGE + $" {voltage}");
+        }
+
+        public void SetCurrentValue(string current)
+        {
+            SetValue(SET_CURRENT + $" {current}");
+        }
+
     }
 }

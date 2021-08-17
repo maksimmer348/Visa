@@ -38,6 +38,8 @@ namespace VisaForm
             this.GetCurrentToSupplyPSH = new System.Windows.Forms.TextBox();
             this.GetVoltageToSupplyPSH = new System.Windows.Forms.TextBox();
             this.GroupSupplyPSH = new System.Windows.Forms.GroupBox();
+            this.CheckIndicatorPSH = new System.Windows.Forms.Button();
+            this.CheckDevice = new System.Windows.Forms.Button();
             this.FineTuning = new System.Windows.Forms.CheckBox();
             this.GroupMeterGDM = new System.Windows.Forms.GroupBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -47,8 +49,6 @@ namespace VisaForm
             this.GetCurrentToMeterGDM = new System.Windows.Forms.TextBox();
             this.GetVoltageToMeterGDM = new System.Windows.Forms.TextBox();
             this.StartTheMeterGDM = new System.Windows.Forms.Button();
-            this.CheckDevice = new System.Windows.Forms.Button();
-            this.CheckLump = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.SetCurrentToSupplyPSH)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SetVoltageToSupplyPSH)).BeginInit();
             this.GroupSupplyPSH.SuspendLayout();
@@ -88,6 +88,11 @@ namespace VisaForm
             this.SetCurrentToSupplyPSH.Size = new System.Drawing.Size(75, 20);
             this.SetCurrentToSupplyPSH.TabIndex = 4;
             this.SetCurrentToSupplyPSH.ThousandsSeparator = true;
+            this.SetCurrentToSupplyPSH.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // label2
             // 
@@ -139,7 +144,7 @@ namespace VisaForm
             // 
             // GroupSupplyPSH
             // 
-            this.GroupSupplyPSH.Controls.Add(this.CheckLump);
+            this.GroupSupplyPSH.Controls.Add(this.CheckIndicatorPSH);
             this.GroupSupplyPSH.Controls.Add(this.CheckDevice);
             this.GroupSupplyPSH.Controls.Add(this.FineTuning);
             this.GroupSupplyPSH.Controls.Add(this.GetCurrentToSupplyPSH);
@@ -156,6 +161,26 @@ namespace VisaForm
             this.GroupSupplyPSH.TabIndex = 13;
             this.GroupSupplyPSH.TabStop = false;
             this.GroupSupplyPSH.Text = "Supply PSH";
+            // 
+            // CheckIndicatorPSH
+            // 
+            this.CheckIndicatorPSH.BackColor = System.Drawing.Color.Red;
+            this.CheckIndicatorPSH.ForeColor = System.Drawing.Color.Transparent;
+            this.CheckIndicatorPSH.Location = new System.Drawing.Point(194, 84);
+            this.CheckIndicatorPSH.Name = "CheckIndicatorPSH";
+            this.CheckIndicatorPSH.Size = new System.Drawing.Size(14, 23);
+            this.CheckIndicatorPSH.TabIndex = 15;
+            this.CheckIndicatorPSH.UseVisualStyleBackColor = false;
+            // 
+            // CheckDevice
+            // 
+            this.CheckDevice.Location = new System.Drawing.Point(116, 84);
+            this.CheckDevice.Name = "CheckDevice";
+            this.CheckDevice.Size = new System.Drawing.Size(72, 23);
+            this.CheckDevice.TabIndex = 14;
+            this.CheckDevice.Text = "проверка";
+            this.CheckDevice.UseVisualStyleBackColor = true;
+            this.CheckDevice.Click += new System.EventHandler(this.CheckDevice_Click);
             // 
             // FineTuning
             // 
@@ -245,25 +270,6 @@ namespace VisaForm
             this.StartTheMeterGDM.UseVisualStyleBackColor = true;
             this.StartTheMeterGDM.Click += new System.EventHandler(this.StartTheMeterGDM_Click);
             // 
-            // CheckDevice
-            // 
-            this.CheckDevice.Location = new System.Drawing.Point(116, 84);
-            this.CheckDevice.Name = "CheckDevice";
-            this.CheckDevice.Size = new System.Drawing.Size(72, 23);
-            this.CheckDevice.TabIndex = 14;
-            this.CheckDevice.Text = "проверка";
-            this.CheckDevice.UseVisualStyleBackColor = true;
-            // 
-            // CheckLump
-            // 
-            this.CheckLump.BackColor = System.Drawing.Color.Red;
-            this.CheckLump.ForeColor = System.Drawing.Color.Transparent;
-            this.CheckLump.Location = new System.Drawing.Point(194, 84);
-            this.CheckLump.Name = "CheckLump";
-            this.CheckLump.Size = new System.Drawing.Size(14, 23);
-            this.CheckLump.TabIndex = 15;
-            this.CheckLump.UseVisualStyleBackColor = false;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -303,7 +309,7 @@ namespace VisaForm
         private System.Windows.Forms.TextBox GetVoltageToMeterGDM;
         private System.Windows.Forms.Button StartTheMeterGDM;
         private System.Windows.Forms.CheckBox FineTuning;
-        private System.Windows.Forms.Button CheckLump;
+        private System.Windows.Forms.Button CheckIndicatorPSH;
         private System.Windows.Forms.Button CheckDevice;
     }
 }

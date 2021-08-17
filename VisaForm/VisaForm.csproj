@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ComPort\SerialPort.cs" />
+    <Compile Include="ComPort\MySerialPort.cs" />
     <Compile Include="Devices\DeviceSupplyPSH.cs" />
     <Compile Include="Devices\Libraries\ComandsSupplyPSH.cs" />
     <Compile Include="Devices\Libraries\CommandsLibrary.cs" />

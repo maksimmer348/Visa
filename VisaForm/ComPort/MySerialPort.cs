@@ -9,12 +9,14 @@ namespace VisaForm.ComPort
 {
     public class MySerialPort
     {
-        private int Number;
-        private int BaudRate;
-        private int Parity;
+        private readonly int Number;
+        private readonly int BaudRate;
+        private readonly int Parity;
         private GodSerialPort Serial;
-        public event Action<Exception> ReceiveErrorMessage;
-        public event Action<string> ReceiveMessage;
+
+        public event Action<Exception> ReceiveErrorMessage;//вывод исключений
+        public event Action<string> ReceiveMessage;//вывод стандартных ответов
+        public event Action<string, string> ReceiveSpecMessage;//вывод ответов вида => ответ от прибора[20], команда прибору[:chan1:meas:volt ?] 
 
         public MySerialPort(int number, int baudRate, int parity)
         {
@@ -34,14 +36,14 @@ namespace VisaForm.ComPort
                 }
                 catch (Exception exception)
                 {
-                    ReceiveErrorMessage?.Invoke(exception);
+                    throw exception;
                 }
             }
-
         }
 
         public void Write(string message)
         {
+            Open();
             const string END_OF_LINE = "\r\n";
             try
             {
@@ -55,12 +57,25 @@ namespace VisaForm.ComPort
             }
         }
 
-        public string Read()
+        /// <summary>
+        /// чтение из компорта
+        /// </summary>
+        /// <param name="cmd">передача команды в ответе для идентификации</param>
+        /// <param name="loop">необходимость в передаче команды в ответе</param>
+        public void Read(string cmd = null, bool loop = false)
         {
             try
             {
                 var dataBytes = Encoding.UTF8.GetString(Serial.Read());
-                return dataBytes;
+                var returnSting = RemoveUnnecessary(dataBytes);
+                if (loop)
+                {
+                    ReceiveSpecMessage?.Invoke(returnSting, cmd);//передача ответа от прибора и команды в инвет
+                }
+                else
+                {
+                    ReceiveMessage?.Invoke(returnSting);//передача только ответа от прибора
+                }
             }
             catch (Exception exception)
             {
@@ -84,10 +99,11 @@ namespace VisaForm.ComPort
             }
         }
 
-        static string RemoveUnnecessary(string message)
+        static string RemoveUnnecessary(string message)//удаление мусора для строки ответа
         {
             var unnecessary = new[] { '?', '\n', '\r' };
             return String.Join("", message.Where((ch) => !unnecessary.Contains(ch)));
         }
+
     }
 }

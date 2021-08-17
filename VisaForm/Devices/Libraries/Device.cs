@@ -8,66 +8,75 @@ namespace VisaForm.Devices.Libraries
 {
     public abstract class Device
     {
-        protected MySerialPort Serial;
-        public event EventHandler<string> Received;
-        protected string Identifier;
+        private ManualResetEvent Suspense = new ManualResetEvent(true);//для приостановки петли измерений значений
+        private Task Run;//рабочий поток
+        private static MySerialPort Serial;//компорт
+        public event Action<string> ResponseMessage;//прием обычных сообщений с прибора
+        public event Action<string, string> ResponseSpecMessage;//прием сообщений с прибора вида => ответ от прибора[20], команда прибору[:chan1:meas:volt ?] 
+        protected string Identifier = "?";//индентифиактор запросов 
 
-
-        private CancellationTokenSource repeatToken;
-
-        protected Device(string identifier)
+        protected Device(ConfigDevice config, string identifier)
         {
-            Identifier = identifier;
+            Serial = new MySerialPort(config.ChannelNumber, config.BaudRate, config.ParityBit);
+            Serial.ReceiveMessage += Response;
+            Serial.ReceiveSpecMessage += ResponseSpec;
         }
 
-        public void SetConfig(ConfigDevice cfg)
+        public void GetValue(params string[] cmd)
         {
-            Serial = new MySerialPort(cfg.ChannelNumber, cfg.BaudRate, cfg.ParityBit);
+            Run = Task.Run(async () => WorkRepeat(cmd));
         }
 
-        public void RepeatCommands(params string[] commands)
+        public void SetValue(string cmd)
         {
-            repeatToken = new CancellationTokenSource();
-            Task.Run(async () =>
+            Run = Task.Run(async () => Work(cmd));
+        }
+
+        private void WorkRepeat(string[] commands)
+        {
+            while (true)
             {
-                while (!repeatToken.IsCancellationRequested)
-                {
-                    await SendCommands(commands);
-                }
-            }, repeatToken.Token);
-
-        }
-        public async Task<string> StartSendCommands(params string[] commands)
-        {
-            return await Task.Run(() => SendCommands(commands));
-        }
-
-        public async Task<string> SendCommands(string[] commands, CancellationTokenSource token = null)
-        {
-            token?.Cancel();
-            await Task.Delay(500);
-
-            string result = null;
-            foreach (var command in commands)
-            {
-                if (command.Contains(Identifier))
+                foreach (var command in commands)
                 {
                     Serial.Write(command);
-                    await Task.Delay(500);
-                    result = Serial.Read();
+                    Thread.Sleep(300);
+                    Serial.Read(command, true);//отправляем команду и запрос на ее возврат через ивент
+                    Suspense.WaitOne();
                 }
-                else
-                {
-                    Serial.Write(command);
-
-                }
-
-                await Task.Delay(500);
             }
-
-            return result;
+        }
+        private void Work(string command)
+        {
+            if (!command.Contains(Identifier))//если это запрос то ответ нам не нужен
+            {
+                Suspense.Reset();// приостановка петли измерений значений
+                Serial.Write(command);
+                Suspense.Set();//продолить петлю измерений значений
+            }
+            else//если не запрос требуем ответа
+            {
+                Suspense.Reset();
+                Serial.Write(command);
+                Thread.Sleep(300);
+                Serial.Read(command, true);//полуаем ответ
+                Suspense.Set();
+            }
         }
 
-        public abstract void Check();
+
+        void Response(string res)
+        {
+            ResponseMessage?.Invoke(res);
+        }
+
+        /// <summary>
+        /// ответ от прибора 
+        /// </summary>
+        /// <param name="response">ответ</param>
+        /// <param name="cmd"></param>
+        void ResponseSpec(string response, string cmd)
+        {
+            ResponseSpecMessage?.Invoke(response, cmd);
+        }
     }
 }
