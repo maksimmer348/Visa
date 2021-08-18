@@ -21,7 +21,7 @@ namespace VisaForm
             //Psh.SetConfig(new ConfigDevice{ChannelNumber = 4, BaudRate = 9600, ParityBit = 0});
         }
 
-        private void Update(string response, string cmd)
+        private void Update(string response, CommandImplicits cmd)
         {
             if (cmd == RETURN_VOLTAGE)
             {
@@ -46,7 +46,7 @@ namespace VisaForm
 
         private void StartTheSupplyPSH_Click(object sender, EventArgs e)
         {
-            Psh.Output();
+            Psh.Output((Button)sender);
         }
 
         private void StartTheMeterGDM_Click(object sender, EventArgs e)

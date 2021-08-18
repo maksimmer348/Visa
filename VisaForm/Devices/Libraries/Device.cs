@@ -12,7 +12,7 @@ namespace VisaForm.Devices.Libraries
         private Task Run;//рабочий поток
         private static MySerialPort Serial;//компорт
         public event Action<string> ResponseMessage;//прием обычных сообщений с прибора
-        public event Action<string, string> ResponseSpecMessage;//прием сообщений с прибора вида => ответ от прибора[20], команда прибору[:chan1:meas:volt ?] 
+        public event Action<string, CommandImplicits> ResponseSpecMessage;//прием сообщений с прибора вида => ответ от прибора[20], команда прибору[:chan1:meas:volt ?] 
         protected string Identifier = "?";//индентифиактор запросов 
         
         protected Device(ConfigDevice config, string identifier)
@@ -47,10 +47,13 @@ namespace VisaForm.Devices.Libraries
         }
         private void Work(CommandImplicits command)
         {
-            if (!command.Contains(Identifier))//если это запрос то ответ нам не нужен
+            if (!command.Command.Contains(Identifier))//если это запрос то ответ нам не нужен
+                //пр вызове метода inplictis рабоат не буде  потом унужно явно указать сслку на строку
+                //command.Command.Contains а не command.Contains
             {
                 Suspense.Reset();// приостановка петли измерений значений
-                Serial.Write(command);
+                Serial.Write(command);//в случае с ипликтис тут как раз модно указывать напряму те
+                //command а не command.Command
                 Suspense.Set();//продолить петлю измерений значений
             }
             else//если не запрос требуем ответа
@@ -74,7 +77,7 @@ namespace VisaForm.Devices.Libraries
         /// </summary>
         /// <param name="response">ответ</param>
         /// <param name="cmd"></param>
-        void ResponseSpec(string response, string cmd)
+        void ResponseSpec(string response, CommandImplicits cmd)
         {
             ResponseSpecMessage?.Invoke(response, cmd);
         }

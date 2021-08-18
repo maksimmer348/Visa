@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GodSharp.SerialPort;
+using VisaForm.Devices;
 
 namespace VisaForm.ComPort
 {
@@ -16,7 +17,7 @@ namespace VisaForm.ComPort
 
         public event Action<Exception> ReceiveErrorMessage;//вывод исключений
         public event Action<string> ReceiveMessage;//вывод стандартных ответов
-        public event Action<string, string> ReceiveSpecMessage;//вывод ответов вида => ответ от прибора[20], команда прибору[:chan1:meas:volt ?] 
+        public event Action<string, CommandImplicits> ReceiveSpecMessage;//вывод ответов вида => ответ от прибора[20], команда прибору[:chan1:meas:volt ?] 
 
         public MySerialPort(int number, int baudRate, int parity)
         {
@@ -41,7 +42,7 @@ namespace VisaForm.ComPort
             }
         }
 
-        public void Write(string message)
+        public void Write(CommandImplicits message)
         {
             Open();
             const string END_OF_LINE = "\r\n";
@@ -62,7 +63,7 @@ namespace VisaForm.ComPort
         /// </summary>
         /// <param name="cmd">передача команды в ответе для идентификации</param>
         /// <param name="loop">необходимость в передаче команды в ответе</param>
-        public void Read(string cmd = null, bool loop = false)
+        public void Read(CommandImplicits cmd = null, bool loop = false)
         {
             try
             {

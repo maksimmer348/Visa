@@ -12,12 +12,12 @@ namespace VisaForm.Devices
     {
         public DeviceSupplyPSH(ConfigDevice cfg) : base(cfg, "?")
         {
-            ResponseSpecMessage += REsponse;
+            ResponseSpecMessage += Response;
         }
 
-        private void REsponse(string response, string cmd)
+        private void Response(string response, CommandImplicits cmd)
         {
-            if (cmd == RETURN_OUTPUT)
+            if (cmd.Btn == "StartTheSupplyPSH")
             {
                 if (response == "1")
                 {
@@ -30,11 +30,9 @@ namespace VisaForm.Devices
             }
         }
 
-       
-
         public void Output(Button btn)
         {
-            SetValue(RETURN_OUTPUT);
+            SetValue(new CommandImplicits(RETURN_OUTPUT, btn.Name));
         }
 
         public void Return()
@@ -56,20 +54,25 @@ namespace VisaForm.Devices
 
     public class CommandImplicits
     {
-        public string command;
+        public string Command;
+        public string Btn;
 
-        public CommandImplicits(string command)
+        public CommandImplicits(string command, string btnName)
         {
-            this.command = command;
-        }
-        public static implicit operator CommandImplicits(string x)
-        {
-            return new CommandImplicits(x);
+            Command = command;
+            Btn = btnName;
         }
 
-        private CommandImplicits Contains(string contains)
+        public static implicit operator CommandImplicits(string command)
         {
-            return command.Contains(contains);
+            CommandImplicits c = new CommandImplicits(command, null);
+            return c;
+        }
+
+        public static implicit operator string(CommandImplicits command)
+        {
+
+            return command.Command;
         }
     }
 }
