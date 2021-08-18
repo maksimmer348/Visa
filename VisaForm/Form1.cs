@@ -23,15 +23,15 @@ namespace VisaForm
 
         private void Update(string response, CommandImplicits cmd)
         {
-            if (cmd == RETURN_VOLTAGE)
+            if (cmd.Command == RETURN_VOLTAGE)
             {
                 UpdateBox(GetVoltageToSupplyPSH, response);
             }
-            else if (cmd == RETURN_CURRENT)
+            else if (cmd.Command == RETURN_CURRENT)
             {
                 UpdateBox(GetCurrentToSupplyPSH, response);
             }
-            else if (cmd == RETURN_OUTPUT)
+            else if (cmd.Command == RETURN_OUTPUT)
             {
                 UpdateIndicator(CheckIndicatorPSH, response);
             }

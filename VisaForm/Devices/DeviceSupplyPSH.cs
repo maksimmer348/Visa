@@ -68,11 +68,5 @@ namespace VisaForm.Devices
             CommandImplicits c = new CommandImplicits(command, null);
             return c;
         }
-
-        public static implicit operator string(CommandImplicits command)
-        {
-
-            return command.Command;
-        }
     }
 }
