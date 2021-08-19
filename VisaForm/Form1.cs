@@ -18,11 +18,14 @@ namespace VisaForm
         {
             InitializeComponent();
             Psh.ResponseSpecMessage += Update;
-            //Psh.SetConfig(new ConfigDevice{ChannelNumber = 4, BaudRate = 9600, ParityBit = 0});
         }
 
         private void Update(string response, CommandImplicits cmd)
         {
+            if (cmd.Btn != null)
+            {
+                return;
+            }
             if (cmd.Command == RETURN_VOLTAGE)
             {
                 UpdateBox(GetVoltageToSupplyPSH, response);
@@ -39,20 +42,24 @@ namespace VisaForm
 
         private void SetValuesToSupplyPSH_Click(object sender, EventArgs e)
         {
-            Psh.SetVoltageValues(SetVoltageToSupplyPSH.Text.Replace(",", "."));
-            Psh.SetCurrentValue(SetCurrentToSupplyPSH.Text.Replace(",", "."));
+            
+            Psh.SetVoltageValues((Button)sender,SetVoltageToSupplyPSH.Text.Replace(",", "."));
+            Psh.SetCurrentValue((Button)sender,SetCurrentToSupplyPSH.Text.Replace(",", "."));
 
         }
 
         private void StartTheSupplyPSH_Click(object sender, EventArgs e)
         {
-            Psh.Output((Button)sender);
+            Psh.Output((Button)sender);//отправка индентификатора кнопки
+            //Psh.Output();
         }
 
         private void StartTheMeterGDM_Click(object sender, EventArgs e)
         {
             Psh.Return();
         }
+
+        #region работа с пользовательским интерфейсом
 
         private void FineTuning_CheckedChanged(object sender, EventArgs e)
         {
@@ -89,6 +96,9 @@ namespace VisaForm
                 btn.BackColor = Color.Red;
             }
         }
+
+
+        #endregion
 
         private void CheckDevice_Click(object sender, EventArgs e)
         {
