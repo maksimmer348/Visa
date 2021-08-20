@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisaForm.Devices;
+using VisaForm.Devices.Libraries;
 using static VisaForm.Devices.Libraries.CommandsSupplyPSH;
 namespace VisaForm
 {
@@ -18,6 +19,7 @@ namespace VisaForm
         {
             InitializeComponent();
             Psh.ResponseSpecMessage += Update;
+            Psh.Return();
         }
 
         private void Update(string response, CommandImplicits cmd)
@@ -50,13 +52,14 @@ namespace VisaForm
 
         private void StartTheSupplyPSH_Click(object sender, EventArgs e)
         {
-            Psh.Output((Button)sender);//отправка индентификатора кнопки
-            //Psh.Output();
+            StartTheSupplyPSH.Enabled = false;
+            Psh.GetSetSpecValue(RETURN_OUTPUT,new RequestAndResponse{CommandApply1 = OUTPUT_OFF,CommandApply2 = OUTPUT_ON, ResponseCommandTrue = "1", ResponseCommandFalse = "0"}, (Button)sender);
+            StartTheSupplyPSH.Enabled = true;
         }
 
         private void StartTheMeterGDM_Click(object sender, EventArgs e)
         {
-            Psh.Return();
+            
         }
 
         #region работа с пользовательским интерфейсом
@@ -102,7 +105,7 @@ namespace VisaForm
 
         private void CheckDevice_Click(object sender, EventArgs e)
         {
-
+            Psh.Response((Button)sender, OUTPUT_OFF);//(Button)sender отправка индентификатора кнопки
         }
     }
 

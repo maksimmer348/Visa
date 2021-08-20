@@ -19,7 +19,8 @@ namespace VisaForm.ComPort
 
         public event Action<Exception> ReceiveErrorMessage;//вывод исключений
         public event Action<string, CommandImplicits> ReceiveSpecMessage;//вывод ответов вида => ответ от прибора[20], команда прибору[:chan1:meas:volt ?] 
-        public event Action<string, CommandImplicits> ReceiveButtonMessage;//вывод ответов вида => ответ от прибора[20], команда прибору[:chan1:meas:volt ?] 
+        public CommandImplicits CommandResponse = new CommandImplicits(null,null);
+       
         public MySerialPort(int number, int baudRate, int parity)
         {
             Number = number;
@@ -63,22 +64,22 @@ namespace VisaForm.ComPort
         /// чтение из компорта
         /// </summary>
         /// <param name="cmd">передача команды в ответе для идентификации</param>
-        /// <param name="loop">необходимость в передаче команды в ответе</param>
-        public void Read(CommandImplicits cmd = null)
+        /// <param name="cmdRequsetCmd"></param>
+        public void Read(CommandImplicits cmd = null, bool cmdRequsetCmd = false)
         {
             try
             {
                 var dataBytes = Encoding.UTF8.GetString(Serial.Read());
                 var returnSting = RemoveUnnecessary(dataBytes);
-                if (cmd.Btn == null)
+                if (!cmdRequsetCmd)
                 {
                     ReceiveSpecMessage?.Invoke(returnSting, cmd);//передача ответа от прибора и команды в инвет
                 }
-                else if (cmd.Btn != null)
+                else if(cmdRequsetCmd)
                 {
-                    ReceiveButtonMessage?.Invoke(returnSting, cmd);//передача ответа от прибора, кнопки и команды в инвет
+                    CommandResponse.Command = returnSting;
+                    CommandResponse.Btn = cmd.Btn;
                 }
-
             }
             catch (Exception exception)
             {
